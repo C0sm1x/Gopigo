@@ -7,26 +7,44 @@ try:
     import gopigo
 except:
     print("Oh no! The gopigo module couldn't be imported! D:")
-def gameControllerInput():
-    running = True
+
+import os
+import datetime
+
+class Robot:
+
+    def __init__(self):
+        self.moving = True
+
+    def movement(self):
         
-    while running:
-        events = get_gamepad()
-        for event in events:
-            print(event.ev_type, event.code, event.state)
-            
-            if event.code == "ABS_HAT0Y" and event.state == -1:
-                gopigo.fwd()
-            if event.code == "BTN_SOUTH" and event.state == 1:
-                gopigo.stop()
-            if event.code == "ABS_HAT0Y" and event.state == 1:
-                gopigo.bwd()
-            
-            if event.code == "ABS_HAT0X" and event.state == -1:
-                gopigo.right_rot()
+        self.events = get_gamepad()
+        for self.event in self.events:
+            print("Event: " + str(self.event.ev_type), "Event code: " + str(self.event.code), "Event State: " + str(self.event.state))
+        
+        if self.event.code == "ABS_RZ" and self.event.state > 0:
+            gopigo.fwd()
+        if self.event.code == "BTN_NORTH" and self.event.state == 1:
+            gopigo.stop()
+        if self.event.code == "ABS_Z" and self.event.state > 0:
+            gopigo.bwd()
+        
+        if self.event.code == "ABS_HAT0X" and self.event.state == -1:
+            gopigo.right_rot()
 
-            if event.code == "ABS_HAT0X" and event.state == 1:
-                gopigo.left_rot()
+        if self.event.code == "ABS_HAT0X" and self.event.state == 1:
+            gopigo.left_rot()
 
+    def otherfunctionality(self): 
+        self.date = datetime.datetime.now()
+        if self.event.code == "BTN_SELECT" and self.event.state == 1:
+            try:
+                os.system("raspistill -n -q 100 -hf -vf -o picture`date +$y-%s`.jpg")
+            except:
+                print("Can't take picture. Please enable the camera module")
 
-gameControllerInput()
+robot = Robot()
+
+while robot.moving == True:
+    robot.movement()
+    robot.otherfunctionality()
