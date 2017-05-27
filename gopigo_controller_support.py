@@ -10,11 +10,12 @@ except:
 
 import os
 import datetime
+import sendemail
 
 class Robot:
 
     def __init__(self):
-        self.moving = True
+        self.running = True
 
     def movement(self):
         
@@ -35,16 +36,20 @@ class Robot:
         if self.event.code == "ABS_HAT0X" and self.event.state == 1:
             gopigo.left_rot()
 
-    def otherfunctionality(self): 
-        self.date = datetime.datetime.now()
+    def takingPicture(self): 
+        #self.date = datetime.datetime.now()
         if self.event.code == "BTN_SELECT" and self.event.state == 1:
             try:
-                os.system("raspistill -n -q 100 -hf -vf -o picture`date +$y-%s`.jpg")
+                #os.system("raspistill -n -q 100 -hf -vf -o picture`date +$y-%s`.jpg")
+                sendemail.sendpicture()                
+                os.system("raspistill -n -q 100 -hf -vf -o picture.jpg")
             except:
-                print("Can't take picture. Please enable the camera module")
+                print("Can't take picture, or email it. Please enable the camera module, or have a look at sendemail.py")
 
 robot = Robot()
 
-while robot.moving == True:
+while robot.running == True:
     robot.movement()
-    robot.otherfunctionality()
+    robot.takingPicture()
+
+sendemail.sendemailQuit()
